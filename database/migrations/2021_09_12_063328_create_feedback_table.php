@@ -19,8 +19,12 @@ class CreateFeedbackTable extends Migration
             $table->string('comments', 255)->nullable();
             $table->string('status', 30)->nullable();            
             $table->bigInteger('user_id')->unsigned()->nullable();
+            $table->bigInteger('address_id')->unsigned()->nullable();
+            
             $table->bigInteger('feedback_types_id')->unsigned()->nullable();
             $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('address_id')->references('id')->on('addresses');
+            
             $table->foreign('feedback_types_id')->references('id')->on('feedback_types');
             $table->timestamps();
         });

@@ -15,7 +15,6 @@ class CreateUsersTable extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->bigIncrements('id')->unsigned();
-         
             $table->string('first_name', 20)->nullable();
             $table->string('last_name', 20)->nullable();
             $table->string('email')->unique()->nullable();
@@ -25,7 +24,7 @@ class CreateUsersTable extends Migration
             $table->string('type', 20)->default('user')->nullable();
             $table->bigInteger('address_id')->unsigned()->nullable();
             $table->timestamp('email_verified_at')->nullable();
-             $table->rememberToken();
+            $table->rememberToken();
             $table->timestamps();
             $table->foreign('address_id')->references('id')->on('addresses');
         
