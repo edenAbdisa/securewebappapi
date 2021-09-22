@@ -137,7 +137,65 @@ class FeedbackTypeController extends Controller
     {
         //
     } 
-
+    public function search(Request $request)
+    {
+        try {
+            $validatedData = Validator::make($request->all(), [
+                'name' => ['max:50'],
+                'category_id' => ['numeric'],
+                'status' => ['max:50'],
+                'used_for' => ['max:70']
+            ]);
+            if ($validatedData->fails()) {
+                return response()
+                    ->json(
+                        HelperClass::responeObject(null, false, Response::HTTP_BAD_REQUEST, "Validation failed check JSON request", "", $validatedData->errors()),
+                        Response::HTTP_BAD_REQUEST
+                    );
+            }
+            $input = $request->all();
+            $types = FeedbackType::all();
+            if ($types->count() <= 0) {
+                return response()
+                    ->json(
+                        HelperClass::responeObject($types, true, Response::HTTP_OK, 'List of types.', "There is no type by the search.", ""),
+                        Response::HTTP_OK
+                    );
+            }
+            $col = DB::getSchemaBuilder()->getColumnListing('feedback_types');
+            $requestKeys = collect($request->all())->keys();
+            foreach ($requestKeys as $key) { 
+                if (in_array($key, $col)) {
+                    if ($key == 'name') {
+                        $input[$key] = Str::ucfirst($input[$key]);
+                    }
+                    $types = $types->where($key, $input[$key])->values();
+                }
+            }
+            $types->each(function ($item, $key) {
+                $item->category;
+                $item->service;
+                $item->item;
+            });
+            return response()
+                    ->json(
+                        HelperClass::responeObject($types, true, Response::HTTP_OK, 'List of types.', "List of types by this search.", ""),
+                        Response::HTTP_OK
+                    );
+        } catch (ModelNotFoundException $ex) { // User not found
+            return response()
+                ->json(
+                    HelperClass::responeObject(null, false, RESPONSE::HTTP_UNPROCESSABLE_ENTITY, 'The model doesnt exist.', "", $ex->getMessage()),
+                    Response::HTTP_UNPROCESSABLE_ENTITY
+                );
+        } catch (Exception $ex) { // Anything that went wrong
+            return response()
+                ->json(
+                    HelperClass::responeObject(null, false, RESPONSE::HTTP_UNPROCESSABLE_ENTITY, 'Internal error occured.', "", $ex->getMessage()),
+                    Response::HTTP_INTERNAL_SERVER_ERROR
+                );
+        }
+    }
     /**
      * Update the specified resource in storage.
      *
