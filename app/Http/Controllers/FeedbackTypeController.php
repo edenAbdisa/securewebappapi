@@ -23,7 +23,35 @@ class FeedbackTypeController extends Controller
      */
     public function index()
     {
-        //
+        try {
+            $feedbacktype = FeedbackType::where('status', '=', 'active')->orWhereNull('status')->get()
+                ->each(function ($item, $key) {
+                });
+            return response()
+                ->json(
+                    HelperClass::responeObject(
+                        $feedbacktype,
+                        true,
+                        Response::HTTP_OK,
+                        'Successfully fetched.',
+                        "feedback are fetched sucessfully.",
+                        ""
+                    ),
+                    Response::HTTP_OK
+                );
+        } catch (ModelNotFoundException $ex) { // User not found
+            return response()
+                ->json(
+                    HelperClass::responeObject(null, false, RESPONSE::HTTP_UNPROCESSABLE_ENTITY, 'The model doesnt exist.', "", $ex->getMessage()),
+                    Response::HTTP_UNPROCESSABLE_ENTITY
+                );
+        } catch (Exception $ex) { // Anything that went wrong
+            return response()
+                ->json(
+                    HelperClass::responeObject(null, false, RESPONSE::HTTP_UNPROCESSABLE_ENTITY, 'Internal server error.', "", $ex->getMessage()),
+                    Response::HTTP_UNPROCESSABLE_ENTITY
+                );
+        }
     } 
 
     /**
@@ -40,65 +68,35 @@ class FeedbackTypeController extends Controller
             ]);
             if ($validatedData->fails()) {
                 return response()
-                ->json([
-                    'data' =>null,
-                    'success' => false,
-                    'errors' => [
-                        [
-                            'status' => Response::HTTP_BAD_REQUEST,
-                            'title' => "Validation failed check JSON request",
-                            'message' => $validatedData->errors()
-                        ],
-                    ]
-                ], Response::HTTP_BAD_REQUEST);
+                    ->json(
+                        HelperClass::responeObject(null, false, Response::HTTP_BAD_REQUEST, "Validation failed check JSON request", "", $validatedData->errors()),
+                        Response::HTTP_BAD_REQUEST
+                    );            
             }
         $feedbacktype_old = FeedbackType::where('name', Str::ucfirst($request->name)) 
                     ->first();
         if (!$feedbacktype_old) {
             $feedbacktype = new FeedbackType($request->all());
             $feedbacktype->status="active"; 
+            $feedbacktype->name=Str::ucfirst($request->name);
                 if ($feedbacktype->save()) { 
                     return response()
-                    ->json([
-                        'data' =>$feedbacktype,
-                        'success' => true,
-                        'content' => [
-                            [
-                                'status' => Response::HTTP_CREATED,
-                                'title' => 'Type created.',
-                                'message' => "The type is created sucessfully.",
-                                'error'=>""
-                            ],
-                        ]
-                    ], Response::HTTP_CREATED); 
+                    ->json(
+                        HelperClass::responeObject($feedbacktype, true, Response::HTTP_CREATED, "Feedback type created.", "The feedback type is created sucessfully.",""),
+                        Response::HTTP_CREATED);
                 } else {
-                    return response()
-                        ->json([
-                            'data' =>$feedbacktype ,
-                            'success' => false,
-                            'content' => [
-                                [
-                                    'status' => Response::HTTP_INTERNAL_SERVER_ERROR,
-                                    'title' => 'Internal error',
-                                    'message' => "This type couldnt be saved.",
-                                    'error'=>"This type couldnt be saved."
-                                ],
-                            ]
-                        ], Response::HTTP_INTERNAL_SERVER_ERROR);
+                    return  response()
+                    ->json(
+                        HelperClass::responeObject(null, false, Response::HTTP_INTERNAL_SERVER_ERROR, "Inernal error", "", "The feedback couldn't be saved due to internal error"),
+                        Response::HTTP_INTERNAL_SERVER_ERROR
+                    );
                     }
         } else {
-                return response()
-                ->json([
-                    'data' =>$feedbacktype_old ,
-                    'success' => false,
-                    'content' => [                        [
-                            'status' => Response::HTTP_CONFLICT,
-                            'title' => 'Feedback already exist.',
-                            'message' => "This feedback already exist in the database.",
-                            'error'=>""
-                        ],
-                    ]
-                ], Response::HTTP_CONFLICT);  
+            return response()
+            ->json(
+                HelperClass::responeObject(null, false, Response::HTTP_CONFLICT, 'Feedback already exist.', "",  "This feedback already exist in the database."),
+                Response::HTTP_CONFLICT
+            );  
         } 
     }catch (ModelNotFoundException $ex) { // User not found
         return response()

@@ -27,6 +27,7 @@ class User extends Authenticatable
         'address_id', 
         'remember_token'
     ];
+    protected $table = 'users';
     protected $token='';
     protected $casts = [
         'created_at' => 'datetime:Y-m-d',

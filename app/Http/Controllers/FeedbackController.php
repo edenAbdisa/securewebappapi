@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Feedback;
+use App\Models\FeedbackType;
+use App\Models\Address;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Exception;
@@ -12,6 +14,7 @@ use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+
 class FeedbackController extends Controller
 {
     /**
@@ -19,12 +22,12 @@ class FeedbackController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         try {
-            $feedback = Feedback::where('status', '=', 'active')->orWhereNull('status')->get()
+            $user = $request->user();
+            $feedback = Feedback::where('user_id', $user->id)->get()
                 ->each(function ($item, $key) {
-                   
                 });
             return response()
                 ->json(
@@ -51,8 +54,39 @@ class FeedbackController extends Controller
                     Response::HTTP_UNPROCESSABLE_ENTITY
                 );
         }
-    }     
-
+    }
+    public function review()
+    {
+        try {
+            $feedback = Feedback::where('status', '=', 'active')->orWhereNull('status')->get()
+                ->each(function ($item, $key) {
+                });
+            return response()
+                ->json(
+                    HelperClass::responeObject(
+                        $feedback,
+                        true,
+                        Response::HTTP_OK,
+                        'Successfully fetched.',
+                        "feedback are fetched sucessfully.",
+                        ""
+                    ),
+                    Response::HTTP_OK
+                );
+        } catch (ModelNotFoundException $ex) { // User not found
+            return response()
+                ->json(
+                    HelperClass::responeObject(null, false, RESPONSE::HTTP_UNPROCESSABLE_ENTITY, 'The model doesnt exist.', "", $ex->getMessage()),
+                    Response::HTTP_UNPROCESSABLE_ENTITY
+                );
+        } catch (Exception $ex) { // Anything that went wrong
+            return response()
+                ->json(
+                    HelperClass::responeObject(null, false, RESPONSE::HTTP_UNPROCESSABLE_ENTITY, 'Internal server error.', "", $ex->getMessage()),
+                    Response::HTTP_UNPROCESSABLE_ENTITY
+                );
+        }
+    }
     /**
      * Store a newly created resource in storage.
      *
@@ -61,7 +95,75 @@ class FeedbackController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        try {
+            $user = $request->user();
+            $validatedData = Validator::make($request->all(), [
+                'file' => ['max:30'],
+                'comments' => ['required', 'max:30'],
+                'feedback_name' => ['required'],
+                'address.latitude' => ['required', 'numeric'],
+                'address.longitude' => ['required', 'numeric'],
+                'address.country' => ['required', 'max:50'],
+                'address.city' => ['required', 'max:50'],
+                'address.type' => ['required', 'max:10', Rule::in(['feedback'])]
+            ]);
+            if ($validatedData->fails()) {
+                return response()
+                    ->json(
+                        HelperClass::responeObject(null, false, Response::HTTP_BAD_REQUEST, "Validation failed check JSON request", "", $validatedData->errors()),
+                        Response::HTTP_BAD_REQUEST
+                    );
+            }
+            $feedbacktype = FeedbackType::where('feedback_name', Str::ucfirst($request->name))
+                ->first();
+            if (!$feedbacktype) {
+                $address = $request->address;
+                $address = new Address($address);
+                $address->type = 'feedback';
+                if (!$address->save()) {
+                    return  response()
+                        ->json(
+                            HelperClass::responeObject(null, false, Response::HTTP_INTERNAL_SERVER_ERROR, "Address couldn't be saved.", "",  "Address couldn't be saved"),
+                            Response::HTTP_INTERNAL_SERVER_ERROR
+                        );
+                }
+                $feedback = new Feedback($request->all());
+                $feedback->user_id = $user->id;
+                $feedback->feedback_types_id = $feedbacktype->id;
+                $feedback->status = "active";
+                if ($feedback->save()) {
+                    return response()
+                        ->json(
+                            HelperClass::responeObject($feedbacktype, true, Response::HTTP_CREATED, "Feedback saved", "Feedback is saved sucessfully", ""),
+                            Response::HTTP_CREATED
+                        );
+                } else {
+                    return response()
+                        ->json(
+                            HelperClass::responeObject($feedbacktype, false, Response::HTTP_CREATED, "Internal error", "", "Feedback isn't saved sucessfully"),
+                            Response::HTTP_CREATED
+                        );
+                }
+            } else {
+                return response()
+                    ->json(
+                        HelperClass::responeObject($feedbacktype, false, Response::HTTP_BAD_REQUEST, "Feedback type doesnt exist.", "", "This feedback type doesnt exist."),
+                        Response::HTTP_BAD_REQUEST
+                    );
+            }
+        } catch (ModelNotFoundException $ex) {
+            return response()
+                ->json(
+                    HelperClass::responeObject(null, false, RESPONSE::HTTP_UNPROCESSABLE_ENTITY, 'The model doesnt exist.', "", $ex->getMessage()),
+                    Response::HTTP_UNPROCESSABLE_ENTITY
+                );
+        } catch (Exception $ex) { // Anything that went wrong
+            return response()
+                ->json(
+                    HelperClass::responeObject(null, false, RESPONSE::HTTP_UNPROCESSABLE_ENTITY, 'Internal server error.', "", $ex->getMessage()),
+                    Response::HTTP_UNPROCESSABLE_ENTITY
+                );
+        }
     }
 
     /**
@@ -101,7 +203,7 @@ class FeedbackController extends Controller
             }
             $col = DB::getSchemaBuilder()->getColumnListing('feedbacks');
             $requestKeys = collect($request->all())->keys();
-            foreach ($requestKeys as $key) { 
+            foreach ($requestKeys as $key) {
                 if (in_array($key, $col)) {
                     if ($key == 'name') {
                         $input[$key] = Str::ucfirst($input[$key]);
@@ -109,13 +211,13 @@ class FeedbackController extends Controller
                     $types = $types->where($key, $input[$key])->values();
                 }
             }
-            $types->each(function ($item, $key) { 
+            $types->each(function ($item, $key) {
             });
             return response()
-                    ->json(
-                        HelperClass::responeObject($types, true, Response::HTTP_OK, 'List of types.', "List of types by this search.", ""),
-                        Response::HTTP_OK
-                    );
+                ->json(
+                    HelperClass::responeObject($types, true, Response::HTTP_OK, 'List of types.', "List of types by this search.", ""),
+                    Response::HTTP_OK
+                );
         } catch (ModelNotFoundException $ex) { // User not found
             return response()
                 ->json(
@@ -130,7 +232,7 @@ class FeedbackController extends Controller
                 );
         }
     }
-     
+
 
     /**
      * Update the specified resource in storage.

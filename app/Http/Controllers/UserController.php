@@ -163,16 +163,7 @@ public function store(Request $request)
             'last_name' => ['required','max:20'],
             'email' => ['required','max:255'],
             'password' => ['required','max:12'],
-            'phone_number' => ['required','max:30'], 
-            'birthdate' => ['required','max:15'],
-            'type' => ['required',Rule::in(['user','organization','hr','operations'])], 
-            'membership_id' => ['required','numeric'],
-            'address.latitude' => ['required'],
-            'address.longitude' => ['required'],
-            'address.country' => ['required', 'max:50'],
-            'address.city' => ['required', 'max:50'],
-            'address.type' => ['required', 'max:10', Rule::in(['user'])]
-
+            'phone_number' => ['required','max:30'] 
         ]);
         if ($validatedData->fails()) {
             return response()
@@ -195,16 +186,14 @@ public function store(Request $request)
         $user = new User($input);
         $user->password = Hash::make($request->password);
         $user->remember_token  = $user->createToken('Laravel Password Grant')->accessToken;
-        $address = $request->address;
-        $address = Address::create($address);
-        if ($user->type === "organization") {
-            $user->status = "pending";
-        }
+       /*  $address = $request->address;
+        $address = Address::create($address); */
+         
         $user->status = "active";
-            $user->address_id = $address->id;
+            // $user->address_id = $address->id;
             if($user->save()){
-                $user->address;
-                $user->membership;
+                // $user->address;
+                //$user->membership;
                 return response()
             ->json(
                 HelperClass::responeObject($user, true, Response::HTTP_CREATED,'User created.',"A user is created by the details given.",""),
