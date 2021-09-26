@@ -101,11 +101,11 @@ class FeedbackController extends Controller
                 'file' => ['max:30'],
                 'comments' => ['required', 'max:30'],
                 'feedback_name' => ['required'],
-                'address.latitude' => ['required', 'numeric'],
-                'address.longitude' => ['required', 'numeric'],
-                'address.country' => ['required', 'max:50'],
-                'address.city' => ['required', 'max:50'],
-                'address.type' => ['required', 'max:10', Rule::in(['feedback'])]
+                'address.latitude' => [ 'numeric'],
+                'address.longitude' => ['numeric'],
+                'address.country' => [ 'max:50'],
+                'address.city' => [ 'max:50'],
+                'address.type' => [ 'max:10', Rule::in(['feedback'])]
             ]);
             if ($validatedData->fails()) {
                 return response()
@@ -114,10 +114,10 @@ class FeedbackController extends Controller
                         Response::HTTP_BAD_REQUEST
                     );
             }
-            $feedbacktype = FeedbackType::where('feedback_name', Str::ucfirst($request->name))
+            $feedbacktype = FeedbackType::where('name', Str::ucfirst($request->name))->where('status','!=','deleted')
                 ->first();
             if (!$feedbacktype) {
-                $address = $request->address;
+                /* $address = $request->address;
                 $address = new Address($address);
                 $address->type = 'feedback';
                 if (!$address->save()) {
@@ -126,7 +126,7 @@ class FeedbackController extends Controller
                             HelperClass::responeObject(null, false, Response::HTTP_INTERNAL_SERVER_ERROR, "Address couldn't be saved.", "",  "Address couldn't be saved"),
                             Response::HTTP_INTERNAL_SERVER_ERROR
                         );
-                }
+                } */
                 $feedback = new Feedback($request->all());
                 $feedback->user_id = $user->id;
                 $feedback->feedback_types_id = $feedbacktype->id;
@@ -151,7 +151,8 @@ class FeedbackController extends Controller
                         Response::HTTP_BAD_REQUEST
                     );
             }
-        } catch (ModelNotFoundException $ex) {
+        }
+         catch (ModelNotFoundException $ex) {
             return response()
                 ->json(
                     HelperClass::responeObject(null, false, RESPONSE::HTTP_UNPROCESSABLE_ENTITY, 'The model doesnt exist.', "", $ex->getMessage()),
