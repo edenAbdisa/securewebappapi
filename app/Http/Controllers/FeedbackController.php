@@ -96,7 +96,7 @@ class FeedbackController extends Controller
     public function store(Request $request)
     {
         try {
-            //$user = $request->user();
+            $user = $request->user();
             $validatedData = Validator::make($request->all(), [
                 'file' => ['max:30'],
                 'comments' => ['required', 'max:30'],
@@ -128,8 +128,7 @@ class FeedbackController extends Controller
                         );
                 } */
                 $feedback = new Feedback($request->all());
-                //$feedback->user_id = $user->id;
-                $feedback->user_id=1;
+                $feedback->user_id = $user->id; 
                 $feedback->feedback_types_id = $feedbacktype->id;
                 $feedback->status = "active";
                 if ($feedback->save()) {
