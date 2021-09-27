@@ -38,6 +38,7 @@ Route::post('/feedback', 'FeedbackController@store');
 }); 
 
 
+Route::post('/user', 'UserController@store');
 Route::post('/user/login', 'UserController@login');
 
 
