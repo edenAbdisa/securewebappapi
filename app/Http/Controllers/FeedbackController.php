@@ -60,6 +60,8 @@ class FeedbackController extends Controller
         try {
             $feedback = Feedback::where('status', '=', 'active')->orWhereNull('status')->get()
                 ->each(function ($item, $key) {
+                    $item->user;
+                    $item->feedback_type;
                 });
             return response()
                 ->json(
@@ -228,7 +230,7 @@ class FeedbackController extends Controller
      * @param  \App\Models\Feedback  $feedback
      * @return \Illuminate\Http\Response
      */
-    public function destroyy(Request $request,$id)
+    public function destroy(Request $request,$id)
     {
         try {
            return response()
