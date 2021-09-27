@@ -23,8 +23,7 @@ class UserController extends Controller
     public function index()
     {
         try {
-            $user = User::where('status', '!=', 'blocked')
-                ->orWhereNull('status')->where('type', '=', 'user')->get()
+            $user = User::where('type', '=', 'user')->get()
                 ->each(function ($item, $key) { 
                     $item->remember_token = "";
                 });
