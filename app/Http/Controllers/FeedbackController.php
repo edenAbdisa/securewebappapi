@@ -228,8 +228,50 @@ class FeedbackController extends Controller
      * @param  \App\Models\Feedback  $feedback
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Feedback $feedback)
+    public function destroy(Request $request,$id)
     {
-        //
+        try {
+            $user = $request->user();
+            $feedback = Feedback::find($id);
+            if (!$feedback) {
+                response()
+                    ->json(
+                        HelperClass::responeObject(null, false, Response::HTTP_NOT_FOUND, "Resource Not Found", '', "Request by this id doesnt exist."),
+                        Response::HTTP_NOT_FOUND
+                    );
+            }
+            if ($feedback->user_id!=$user->id) {
+                response()
+                    ->json(
+                        HelperClass::responeObject(null, false, Response::HTTP_NOT_FOUND, "Resource Not Found", '', "You don't have this feedback."),
+                        Response::HTTP_NOT_FOUND
+                    );
+            }
+            if (strcmp($feedback->status,'active')!=0) {
+                response()
+                    ->json(
+                        HelperClass::responeObject(null, false, Response::HTTP_NOT_FOUND, "Can't be deleted", '', "This resource is already reviewed and can't be deleted"),
+                        Response::HTTP_NOT_FOUND
+                    );
+            }
+            $feedback->delete();  
+            return response()
+                ->json(
+                    HelperClass::responeObject(null, true, Response::HTTP_OK, 'Successfully deleted.', "Feedback is deleted sucessfully.", ""),
+                    Response::HTTP_OK
+                );
+        } catch (ModelNotFoundException $ex) {
+            return response()
+                ->json(
+                    HelperClass::responeObject(null, false, RESPONSE::HTTP_UNPROCESSABLE_ENTITY, 'The model doesnt exist.', "", $ex->getMessage()),
+                    Response::HTTP_UNPROCESSABLE_ENTITY
+                );
+        } catch (Exception $ex) { // Anything that went wrong
+            return response()
+                ->json(
+                    HelperClass::responeObject(null, false, RESPONSE::HTTP_UNPROCESSABLE_ENTITY, 'Internal error occured.', "", $ex->getMessage()),
+                    Response::HTTP_INTERNAL_SERVER_ERROR
+                );
+        }
     }
 }
