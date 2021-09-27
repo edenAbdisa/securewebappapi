@@ -21,7 +21,7 @@ class Feedback extends Model
         'created_at' => 'datetime:Y-m-d',
         'updated_at' => 'datetime:Y-m-d',
     ];
-    public function feedback_type()
+    public function feedback_types()
     {
         return $this->belongsTo(FeedbackType::class);
     }

@@ -61,7 +61,7 @@ class FeedbackController extends Controller
             $feedback = Feedback::where('status', '=', 'active')->orWhereNull('status')->get()
                 ->each(function ($item, $key) {
                     $item->user;
-                    $item->feedback_type;
+                    $item->feedback_types;
                 });
             return response()
                 ->json(
