@@ -13,10 +13,10 @@ use Illuminate\Http\Controllers;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-
+/* 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
-});
+}); */
 Route::group(['middleware' => ['auth:api','scope:user,admin']], function () { 
     Route::delete('/user/logout', 'UserController@logout');
     Route::get('/user', 'UserController@index');
@@ -30,7 +30,7 @@ Route::group(['middleware' => ['auth:api','scope:user,admin']], function () {
 
     Route::put('/feedbacktype/{id}', 'FeedbackTypeController@update');
     Route::delete('/feedbacktype/{id}', 'FeedbackTypeController@destroy');
-
+    Route::post('/user/login/refresh', 'UserController@refresh');
 }); 
 
 Route::post('/feedbacktype', 'FeedbackTypeController@store');

@@ -135,14 +135,14 @@ class FeedbackController extends Controller
                 if ($feedback->save()) {
                     return response()
                         ->json(
-                            HelperClass::responeObject($feedbacktype, true, Response::HTTP_CREATED, "Feedback saved", "Feedback is saved sucessfully", ""),
+                            HelperClass::responeObject($feedback, true, Response::HTTP_CREATED, "Feedback saved", "Feedback is saved sucessfully", ""),
                             Response::HTTP_CREATED
                         );
                 } else {
                     return response()
                         ->json(
-                            HelperClass::responeObject($feedbacktype, false, Response::HTTP_CREATED, "Internal error", "", "Feedback isn't saved sucessfully"),
-                            Response::HTTP_CREATED
+                            HelperClass::responeObject($feedback, false, Response::HTTP_OK, "Internal error", "", "Feedback isn't saved sucessfully"),
+                            Response::HTTP_OK
                         );
                 }
             } else {

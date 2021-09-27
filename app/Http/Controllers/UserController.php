@@ -25,9 +25,7 @@ class UserController extends Controller
         try {
             $user = User::where('status', '!=', 'deleted')
                 ->orWhereNull('status')->get()
-                ->each(function ($item, $key) {
-                    $item->address;
-                    $item->membership;
+                ->each(function ($item, $key) { 
                     $item->remember_token = "";
                 });
             return response()
