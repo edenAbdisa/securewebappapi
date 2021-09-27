@@ -223,14 +223,7 @@ class FeedbackTypeController extends Controller
                         HelperClass::responeObject(null, false, Response::HTTP_NOT_FOUND, "Resource Not Found", '', "Request by this id doesnt exist."),
                         Response::HTTP_NOT_FOUND
                     );
-            } 
-            /* if (strcmp($feedback->status,'active')!=0) {
-                response()
-                    ->json(
-                        HelperClass::responeObject(null, false, Response::HTTP_NOT_FOUND, "Can't be deleted", '', "This resource is already reviewed and can't be deleted"),
-                        Response::HTTP_NOT_FOUND
-                    );
-            } */
+            }  
             $feedback->delete();  
             return response()
                 ->json(
