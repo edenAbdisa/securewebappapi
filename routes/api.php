@@ -27,7 +27,7 @@ Route::group(['middleware' => ['auth:api','scope:user,admin']], function () {
     Route::get('/feedback', 'FeedbackController@index');
     Route::get('/feedback/review', 'FeedbackController@review');
     Route::put('/feedback/{id}', 'FeedbackController@update');
-    Route::delete('/feedback/{id}', 'FeedbackController@destroy');
+    Route::delete('/feedback/{id}', 'FeedbackController@destroyy');
 
     Route::put('/feedbacktype/{id}', 'FeedbackTypeController@update');
     Route::delete('/feedbacktype/{id}', 'FeedbackTypeController@destroy');

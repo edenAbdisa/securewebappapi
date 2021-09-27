@@ -228,7 +228,7 @@ class FeedbackController extends Controller
      * @param  \App\Models\Feedback  $feedback
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Request $request,$id)
+    public function destroyy(Request $request,$id)
     {
         try {
             response()
