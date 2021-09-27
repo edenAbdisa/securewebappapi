@@ -67,7 +67,7 @@ class UserController extends Controller
                     Response::HTTP_BAD_REQUEST
                 );
         }
-    $user = User::where('email', Str::strtolower($request->email))->where('status','!=','blocked')->first();
+    $user = User::where('email', Str::lower($request->email))->where('status','!=','blocked')->first();
     if ($user) {
         if (Hash::check($request->password, $user->password)) {
             $token = $user->createToken('Laravel Password Grant', [$user->type])->accessToken;
@@ -166,7 +166,7 @@ public function store(Request $request)
                 );
         }
     $input = $request->all();
-    $user = User::where('email', Str::strtolower($request->email))->first();
+    $user = User::where('email', Str::lower($request->email))->first();
     if (!$user) {
         $user = User::where('phone_number', $request->phone_number)->first();
         if($user){
@@ -177,7 +177,7 @@ public function store(Request $request)
             );
         }
         $user = new User($input);
-        $user->email= Str::strtolower($request->email);
+        $user->email= Str::lower($request->email);
         $user->password = Hash::make($request->password);
         $user->remember_token  = $user->createToken('Laravel Password Grant')->accessToken;
        /*  $address = $request->address;
