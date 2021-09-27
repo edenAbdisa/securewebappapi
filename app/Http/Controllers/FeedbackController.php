@@ -114,7 +114,7 @@ class FeedbackController extends Controller
                         Response::HTTP_BAD_REQUEST
                     );
             }
-            $feedbacktype = FeedbackType::where('name', Str::ucfirst($request->name))->where('status','!=','deleted')
+            $feedbacktype = FeedbackType::where('name', Str::ucfirst($request->feedback_name))->where('status','!=','deleted')
                 ->first();
             if ($feedbacktype) {
                 /* $address = $request->address;
