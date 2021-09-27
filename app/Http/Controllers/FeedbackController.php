@@ -231,7 +231,7 @@ class FeedbackController extends Controller
     public function destroyy(Request $request,$id)
     {
         try {
-            response()
+           return response()
                     ->json(
                         HelperClass::responeObject($request, false, Response::HTTP_OK, "Resource Not Found", $id, "Request by this id doesnt exist."),
                         Response::HTTP_OK
