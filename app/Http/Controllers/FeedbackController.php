@@ -28,6 +28,7 @@ class FeedbackController extends Controller
             $user = $request->user();
             $feedback = Feedback::where('user_id', $user->id)->get()
                 ->each(function ($item, $key) {
+                    $item->feedback_types;
                 });
             return response()
                 ->json(
