@@ -76,7 +76,7 @@ class UserController extends Controller
             if ($user->save()) { 
                 return response()
             ->json(
-                HelperClass::responeObject($user->type, true, Response::HTTP_OK,'User found',"User is succesfully loged in.",""),
+                HelperClass::responeObject($user, true, Response::HTTP_OK,'User found',"User is succesfully loged in.",""),
                 Response::HTTP_OK
             );
             }else{
