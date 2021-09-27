@@ -24,8 +24,6 @@ Route::group(['middleware' => ['auth:api','scope:user,admin']], function () {
     Route::post('/user/logout', 'UserController@logout');
     Route::post('/user/search', 'UserController@search');
     Route::put('/user/{id}', 'UserController@update');
-Route::post('/feedbacktype', 'FeedbackTypeController@store');
-Route::post('/feedback', 'FeedbackController@store');
     Route::get('/feedback', 'FeedbackController@index');
     Route::put('/feedback/{id}', 'FeedbackController@update');
     Route::delete('/feedback/{id}', 'FeedbackController@destroy');
@@ -34,6 +32,10 @@ Route::post('/feedback', 'FeedbackController@store');
     Route::delete('/feedbacktype/{id}', 'FeedbackTypeController@destroy');
 
 }); 
+
+Route::post('/feedbacktype', 'FeedbackTypeController@store');
+Route::post('/feedback', 'FeedbackController@store');
+
 Route::post('/user/login', 'UserController@login');
 
 Route::get('/feedbacktype', 'FeedbackTypeController@index');
