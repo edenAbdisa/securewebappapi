@@ -291,8 +291,7 @@ public function update(Request $request, $id)
             'status' => ['max:255'],
             'birthdate' => ['max:15'],
             'type' => ['numeric'],
-            'address_id' => ['numeric'],
-            'memebrship_id' => ['numeric']
+            'address_id' => ['numeric'] 
         ]);
         if ($validatedData->fails()) {
             return response()
@@ -313,14 +312,11 @@ public function update(Request $request, $id)
             $address->longitude = (float)$address_to_be_updated['longitude'];
             $address->save();
         }
-        $user_to_be_updated = $user->fill($input);
-        $user_to_be_updated->status=$user->status;
+        $user_to_be_updated = $user->fill($input); 
         if ($request->password) {
             $user_to_be_updated->password = Hash::make($request->password);
         }
-        if ($user_to_be_updated->save()) {
-            $user_to_be_updated->address;
-            $user_to_be_updated->membership;
+        if ($user_to_be_updated->save()) { 
             return response()
                 ->json(
                     HelperClass::responeObject($user_to_be_updated, true, Response::HTTP_CREATED, 'User updated.', "The user is updated sucessfully.", ""),
