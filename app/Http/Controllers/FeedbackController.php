@@ -86,13 +86,7 @@ class FeedbackController extends Controller
                     Response::HTTP_UNPROCESSABLE_ENTITY
                 );
         }
-    }
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
+    } 
     public function store(Request $request)
     {
         try {
@@ -165,18 +159,7 @@ class FeedbackController extends Controller
                     Response::HTTP_UNPROCESSABLE_ENTITY
                 );
         }
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Feedback  $feedback
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Feedback $feedback)
-    {
-        //
-    }
+    } 
     public function search(Request $request)
     {
         try {
@@ -233,15 +216,7 @@ class FeedbackController extends Controller
                 );
         }
     }
-
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Feedback  $feedback
-     * @return \Illuminate\Http\Response
-     */
+ 
     public function update(Request $request, Feedback $feedback)
     {
         //

@@ -73,12 +73,10 @@ class UserController extends Controller
         if (Hash::check($request->password, $user->password)) {
             $token = $user->createToken('Laravel Password Grant', [$user->type])->accessToken;
             $user['remember_token'] = $token;
-            if ($user->save()) {
-                $user->address;
-                $user->membership;
+            if ($user->save()) { 
                 return response()
             ->json(
-                HelperClass::responeObject($user, true, Response::HTTP_OK,'User found',"User is succesfully loged in.",""),
+                HelperClass::responeObject($user->type, true, Response::HTTP_OK,'User found',"User is succesfully loged in.",""),
                 Response::HTTP_OK
             );
             }else{
@@ -115,7 +113,7 @@ return response()
     ->json(
         HelperClass::responeObject(null, false, RESPONSE::HTTP_INTERNAL_SERVER_ERROR, 'Internal server error.', "", $ex->getMessage()),
         Response::HTTP_INTERNAL_SERVER_ERROR
-    );
+    ); 
 }
 }
 public function logout(Request $request)
