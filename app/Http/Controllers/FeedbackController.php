@@ -116,7 +116,7 @@ class FeedbackController extends Controller
             }
             $feedbacktype = FeedbackType::where('name', Str::ucfirst($request->name))->where('status','!=','deleted')
                 ->first();
-            if (!$feedbacktype) {
+            if ($feedbacktype) {
                 /* $address = $request->address;
                 $address = new Address($address);
                 $address->type = 'feedback';
