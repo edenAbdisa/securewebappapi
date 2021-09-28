@@ -90,6 +90,17 @@ class FeedbackController extends Controller
                 );
         }
     } 
+    public function commentUpload(Request $request){
+        $file=$request->file('file');
+        $fileName=$file->getClientOriginalName();
+        $finalName= date('His') . $fileName;
+        $request->file('file')->storeAs('file/',$finalName,'public');
+        return response()
+                    ->json(
+                        HelperClass::responeObject($finalName, true, Response::HTTP_CREATED, "Validation failed check JSON request", "WORKED","WORKED"),
+                        Response::HTTP_CREATED
+                    );
+    }
     public function store(Request $request)
     {
         try {
@@ -111,6 +122,7 @@ class FeedbackController extends Controller
                         Response::HTTP_BAD_REQUEST
                     );
             }
+            
             $feedbacktype = FeedbackType::where('name', Str::ucfirst($request->feedback_name))->where('status','!=','deleted')
                 ->first();
             if ($feedbacktype) {
@@ -124,10 +136,16 @@ class FeedbackController extends Controller
                             Response::HTTP_INTERNAL_SERVER_ERROR
                         );
                 } */
+                
                 $feedback = new Feedback($request->all());
                 $feedback->user_id = $user->id; 
                 $feedback->feedback_types_id = $feedbacktype->id;
-                $feedback->status = "active";
+                $feedback->status = "active"; 
+                /* $file=$request->file('file');
+                $fileName=$file->getClientOriginalName();
+                $finalName= date('His') . $fileName;
+                $request->file('file')->storeAs('file/',$finalName,'public');
+                $feedback->file= $fileName; */
                 if ($feedback->save()) {
                     return response()
                         ->json(
