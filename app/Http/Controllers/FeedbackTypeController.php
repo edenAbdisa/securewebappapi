@@ -24,7 +24,7 @@ class FeedbackTypeController extends Controller
     public function index()
     {
         try {
-            $feedbacktype = FeedbackType::where('status', '=', 'active')->orWhereNull('status')->get()
+            $feedbacktype = FeedbackType::where('status', '=', 'active')->get()
                 ->each(function ($item, $key) {
                 });
             return response()
