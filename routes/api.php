@@ -55,7 +55,7 @@ Route::group(['middleware' => ['auth:api','scope:admin']], function () {
     Route::delete('/feedbacktype/{id}', 'FeedbackTypeController@destroy');
     Route::post('/user/login/refresh', 'UserController@refresh');
 Route::post('/feedbacktype', 'FeedbackTypeController@store');
-
+Route::post('/user/fetch', 'UserController@fetchUser');
 Route::post('/feedback', 'FeedbackController@store');
 Route::post('/feedback/commentUpload', 'FeedbackController@commentUpload');
 }); 
