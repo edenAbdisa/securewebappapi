@@ -20,6 +20,36 @@ use Illuminate\Validation\Rule;
 
 class UserController extends Controller
 { 
+    public function fetchUser(Request $request)
+    {
+        try {
+            $user = $request->user();
+            return response()
+                ->json(
+                    HelperClass::responeObject(
+                        $user,
+                        true,
+                        Response::HTTP_OK,
+                        'Successfully fetched.',
+                        "Users are fetched sucessfully.",
+                        ""
+                    ),
+                    Response::HTTP_OK
+                );
+        } catch (ModelNotFoundException $ex) { // User not found
+            return response()
+                ->json(
+                    HelperClass::responeObject(null, false, RESPONSE::HTTP_UNPROCESSABLE_ENTITY, 'The model doesnt exist.', "", $ex->getMessage()),
+                    Response::HTTP_UNPROCESSABLE_ENTITY
+                );
+        } catch (Exception $ex) { // Anything that went wrong
+            return response()
+                ->json(
+                    HelperClass::responeObject(null, false, RESPONSE::HTTP_UNPROCESSABLE_ENTITY, 'Internal server error.', "", $ex->getMessage()),
+                    Response::HTTP_UNPROCESSABLE_ENTITY
+                );
+        }
+    }
     public function index()
     {
         try {

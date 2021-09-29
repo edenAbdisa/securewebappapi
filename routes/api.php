@@ -29,6 +29,7 @@ Route::group(['middleware' => ['auth:api','scope:user']], function () {
     Route::delete('/user/logout', 'UserController@logout');
     Route::get('/user', 'UserController@index');
     Route::get('/users', 'UserController@index');
+    Route::post('/user/fetch', 'UserController@fetchUser');
     Route::post('/user/logout', 'UserController@logout');
     Route::post('/user/search', 'UserController@search');
     Route::put('/user/{id}', 'UserController@update');
