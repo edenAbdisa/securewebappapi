@@ -243,7 +243,7 @@ class FeedbackController extends Controller
         try { 
             $validatedData = Validator::make($request->all(), [
                 'feedback_type' => ['max:30'],
-                'coments' => ['max:70']
+                'comments' => ['max:70']
             ]);            
             $user = $request->user();
 
@@ -269,7 +269,7 @@ return response()
                         Response::HTTP_OK
                     );
 }
-            if ($category_to_be_updated->fill($input)->save()) {
+            if ($category_to_be_updated->fill($request->all())->save()) {
                 
                 return response()
                     ->json(
