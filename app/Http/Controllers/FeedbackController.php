@@ -238,10 +238,66 @@ class FeedbackController extends Controller
         }
     }
  
-    public function update(Request $request, Feedback $feedback)
+  public function update(Request $request, $id)
     {
-        //
+        try { 
+            $validatedData = Validator::make($request->all(), [
+                'feedback_type' => ['max:30'],
+                'coments' => ['max:70']
+            ]);            
+            $user = $request->user();
+
+            if ($validatedData->fails()) {
+                return response()
+                    ->json(
+                        HelperClass::responeObject(null, false, Response::HTTP_BAD_REQUEST, "Validation failed check JSON request", "", $validatedData->errors()),
+                        Response::HTTP_BAD_REQUEST
+                    );
+            }
+            $category_to_be_updated = Feedback::where('id', $id)->first();
+            if (!$category_to_be_updated) {
+                return response()
+                    ->json(
+                        HelperClass::responeObject(null, false, Response::HTTP_NOT_FOUND, 'Feedback doesnt exist.', "This feedback doesnt exist in the database.", ""),
+                        Response::HTTP_OK
+                    );
+            }
+if($category_to_be_updated->user_id!=$user->id){
+return response()
+                    ->json(
+                        HelperClass::responeObject(null, false, Response::HTTP_NOT_FOUND, 'This feedback isnt this users.', "This feedback isnt this users.", "This feedback isnt this users."),
+                        Response::HTTP_OK
+                    );
+}
+            if ($category_to_be_updated->fill($input)->save()) {
+                
+                return response()
+                    ->json(
+                        HelperClass::responeObject($category_to_be_updated, true, Response::HTTP_CREATED, 'Feedback updated.', "The Feedback is updated sucessfully.", ""),
+                        Response::HTTP_CREATED
+                    );
+            } else {
+                return response()
+                    ->json(
+                        HelperClass::responeObject($category_to_be_updated, false, Response::HTTP_INTERNAL_SERVER_ERROR, 'Internal error', "", "This Feedback couldnt be updated."),
+                        Response::HTTP_INTERNAL_SERVER_ERROR
+                    );
+            }
+        } catch (ModelNotFoundException $ex) { // User not found
+            return response()
+                ->json(
+                    HelperClass::responeObject(null, false, RESPONSE::HTTP_UNPROCESSABLE_ENTITY, 'The model doesnt exist.', "", $ex->getMessage()),
+                    Response::HTTP_UNPROCESSABLE_ENTITY
+                );
+        } catch (Exception $ex) { // Anything that went wrong
+            return response()
+                ->json(
+                    HelperClass::responeObject(null, false, RESPONSE::HTTP_UNPROCESSABLE_ENTITY, 'Internal server error.', "", $ex->getMessage()),
+                    Response::HTTP_UNPROCESSABLE_ENTITY
+                );
+        }
     }
+    
 
     /**
      * Remove the specified resource from storage.
