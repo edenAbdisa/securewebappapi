@@ -126,7 +126,7 @@ class UserController extends Controller
     } else {
         return response()
             ->json(
-                HelperClass::responeObject(null, false, Response::HTTP_NOT_FOUND,'User doesnt exist.',"The is no registered user by this email.",""),
+                HelperClass::responeObject(null, false, Response::HTTP_NOT_FOUND,'User doesnt exist.',"There is no registered user by this email.",""),
                 Response::HTTP_NOT_FOUND
             );
     }
@@ -155,7 +155,7 @@ public function logout(Request $request)
     if($user->save()){ 
     return response()
     ->json(
-        HelperClass::responeObject(null, true, RESPONSE::HTTP_OK, 'Successfully logged out', "You have been successfully logged out!", ""),
+        HelperClass::responeObject(null, true, RESPONSE::HTTP_OK, 'Successfully logged out', "You have been logged out!", ""),
         Response::HTTP_OK
     );
 }else{

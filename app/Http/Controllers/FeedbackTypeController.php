@@ -82,19 +82,19 @@ class FeedbackTypeController extends Controller
                 if ($feedbacktype->save()) { 
                     return response()
                     ->json(
-                        HelperClass::responeObject($feedbacktype, true, Response::HTTP_CREATED, "Feedback type created.", "The feedback type is created sucessfully.",""),
+                        HelperClass::responeObject($feedbacktype, true, Response::HTTP_CREATED, "Feedback type created.", "The feedback type is created.",""),
                         Response::HTTP_CREATED);
                 } else {
                     return  response()
                     ->json(
-                        HelperClass::responeObject(null, false, Response::HTTP_INTERNAL_SERVER_ERROR, "Inernal error", "", "The feedback couldn't be saved due to internal error"),
+                        HelperClass::responeObject(null, false, Response::HTTP_INTERNAL_SERVER_ERROR, "Inernal error", "", "The feedbacktype  couldn't be saved due to internal error"),
                         Response::HTTP_INTERNAL_SERVER_ERROR
                     );
                     }
         } else {
             return response()
             ->json(
-                HelperClass::responeObject(null, false, Response::HTTP_CONFLICT, 'Feedback already exist.', "",  "This feedback already exist in the database."),
+                HelperClass::responeObject(null, false, Response::HTTP_CONFLICT, 'Feedback already exist.', "",  "This feedback type already exist in the database."),
                 Response::HTTP_CONFLICT
             );  
         } 

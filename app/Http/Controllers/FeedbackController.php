@@ -149,13 +149,13 @@ class FeedbackController extends Controller
                 if ($feedback->save()) {
                     return response()
                         ->json(
-                            HelperClass::responeObject($feedback, true, Response::HTTP_CREATED, "Feedback saved", "Feedback is saved sucessfully", ""),
+                            HelperClass::responeObject($feedback, true, Response::HTTP_CREATED, "Feedback saved", "Feedback is added", ""),
                             Response::HTTP_CREATED
                         );
                 } else {
                     return response()
                         ->json(
-                            HelperClass::responeObject($feedback, false, Response::HTTP_OK, "Internal error", "", "Feedback isn't saved sucessfully"),
+                            HelperClass::responeObject($feedback, false, Response::HTTP_OK, "Internal error", "", "Feedback isn't saved."),
                             Response::HTTP_OK
                         );
                 }
@@ -265,7 +265,7 @@ class FeedbackController extends Controller
 if($category_to_be_updated->user_id!=$user->id){
 return response()
                     ->json(
-                        HelperClass::responeObject(null, false, Response::HTTP_NOT_FOUND, 'This feedback isnt this users.', "This feedback isnt this users.", "This feedback isnt this users."),
+                        HelperClass::responeObject(null, false, Response::HTTP_NOT_FOUND, 'This feedback isnt this users.', "Wrong user.", "Wrong user."),
                         Response::HTTP_OK
                     );
 }
@@ -273,7 +273,7 @@ return response()
                 
                 return response()
                     ->json(
-                        HelperClass::responeObject($category_to_be_updated, true, Response::HTTP_CREATED, 'Feedback updated.', "The Feedback is updated sucessfully.", ""),
+                        HelperClass::responeObject($category_to_be_updated, true, Response::HTTP_CREATED, 'Feedback updated.', "The Feedback is updated.", ""),
                         Response::HTTP_CREATED
                     );
             } else {
